@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -17,6 +18,27 @@ class UserUpdate(BaseModel):
 
 class UserResponse(UserBase):
 
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class InvoiceBase(BaseModel):
+    user_id : int
+    amount: float
+    description: str
+    created_at: datetime
+
+class InvoiceCreate(InvoiceBase):
+    pass
+
+class InvoiceUpdate(BaseModel):
+    amount: float
+    description: str
+    created_at: datetime
+
+class InvoiceResponse(BaseModel):
     id: int
 
     class Config:
