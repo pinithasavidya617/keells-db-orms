@@ -23,23 +23,23 @@ class UserResponse(UserBase):
     class Config:
         from_attributes = True
 
+# ----------------------------------------------------------------------------------------------------------------------
 
 class InvoiceBase(BaseModel):
     user_id : int
-    amount: float
-    description: str
-    created_at: datetime
+    amount: float = Field(..., gt=0)
+    description: str = Field(..., max_length=400)
 
 class InvoiceCreate(InvoiceBase):
     pass
 
 class InvoiceUpdate(BaseModel):
-    amount: float
-    description: str
-    created_at: datetime
+    amount: Optional[float] = Field(None, gt=0)
+    description: Optional[str] = Field(None, max_length=400)
 
-class InvoiceResponse(BaseModel):
+class InvoiceResponse(InvoiceBase):
     id: int
+    created_at: datetime
 
     class Config:
         from_attributes = True
