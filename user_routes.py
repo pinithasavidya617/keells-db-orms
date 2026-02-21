@@ -38,4 +38,6 @@ async def get_all_users(
 async def update_user( user_id:int, user_update: UserUpdate, db: AsyncSession = Depends(get_db)):
     user_repo = UserRepository(db)
     user = await user_repo.user_update(user_id=user_id, user_update=user_update)
+    if not user:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user
