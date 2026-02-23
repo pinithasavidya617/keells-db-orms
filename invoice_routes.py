@@ -6,7 +6,7 @@ from api_models import InvoiceResponse, InvoiceCreate, InvoiceUpdate
 from database_config import get_db
 from invoice_repository import InvoiceRepository
 
-router = APIRouter(prefix="/invoices", tags=["invoices"])
+router = APIRouter(prefix="/invoices", tags=["Invoices"])
 
 @router.post("/", response_model=InvoiceResponse, status_code=status.HTTP_201_CREATED)
 async def create_invoice_router(invoice_create: InvoiceCreate, db: AsyncSession = Depends(get_db)):
