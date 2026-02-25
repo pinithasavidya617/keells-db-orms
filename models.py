@@ -30,4 +30,4 @@ class PendingInsertRequest(Base):
     query: Mapped[str] = mapped_column(String(1000))
     sql : Mapped[str] = mapped_column(Text())
     status: Mapped[str] = mapped_column(String(20), default="pending")
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now(), default=datetime.now())
