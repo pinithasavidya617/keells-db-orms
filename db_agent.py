@@ -3,10 +3,21 @@ from langchain.agents import create_agent
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langchain_community.utilities import SQLDatabase
 from langchain_openai import ChatOpenAI
-from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.postgres import PostgresSaver
+import psycopg
+
+load_dotenv()
 
 DB_URL = "postgresql+psycopg2://postgres:admin@localhost:5432/keells"
-load_dotenv()
+
+POSTGRES_CONN = psycopg.connect(
+    dbname="keells",
+    user="postgres",
+    password="admin",
+    host="localhost",
+    port="5432",
+    autocommit=True
+)
 
 db = SQLDatabase.from_uri(DB_URL)
 
@@ -42,20 +53,24 @@ Then you should query the schema of the most relevant tables.
     top_k=5,
 )
 
+# Setup PostgresSaver checkpointer
+checkpointer = PostgresSaver(POSTGRES_CONN)
+checkpointer.setup()  # Auto-creates required tables (only runs once)
+
 sql_agent = create_agent(
     model=model,
     tools=tools,
     system_prompt=system_prompt,
-    checkpointer=InMemorySaver()
+    checkpointer=checkpointer
 )
 
 def query_db_with_natural_language(query: str, thread_id: str = "1"):
     try:
-        config = {"configurable" : {"thread_id" : thread_id}}
+        config = {"configurable": {"thread_id": thread_id}}
         result = None
 
         for step in sql_agent.stream(
-                {"messages" : [{"role" : "user", "content" : query}]},
+            {"messages": [{"role": "user", "content": query}]},
             config,
             stream_mode="values"
         ):
